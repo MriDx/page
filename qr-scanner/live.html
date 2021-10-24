@@ -1,36 +1,42 @@
+
 <html>
+  <head>
+    <title>Hls.js demo - basic usage</title>
+  </head>
 
-<head>
-	<link
-		href="https://vjs.zencdn.net/7.15.4/video-js.css"
-		rel="stylesheet" />
+  <body>
+    <script src="../dist/hls.js"></script>
 
-	<!-- If you'd like to support IE8 (for Video.js versions prior to v7) -->
-	<!-- <script src="https://vjs.zencdn.net/ie8/1.1.2/videojs-ie8.min.js"></script> -->
-</head>
+    <center>
+      <h1>Hls.js demo - basic usage</h1>
+      <video height="600" id="video" controls></video>
+    </center>
 
-<body>
-	<video id="my-video" class="video-js" controls
-		preload="auto" width="640" height="264"
-		poster="MY_VIDEO_POSTER.jpg"
-		data-setup="{}">
-		<!-- <source src="MY_VIDEO.mp4"
-			type="video/mp4" /> -->
-		<source src="https://prod-fastly-ap-southeast-1.video.pscp.tv:443/Transcoding/v1/hls/58PTueFMJJ7N432d__Gsr43WJdMFtJKmANOvp6aHFvxcTYATUnd1Bn5q9onfSDCGv-CQzDX5A1HNdUyFaPTsjA/transcode/ap-southeast-1/periscope-replay-direct-live/eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCIsInZlcnNpb24iOiIyIn0.eyJFbmNvZGVyU2V0dGluZyI6ImVuY29kZXJfc2V0dGluZ180ODBwMzBfMTAiLCJIZWlnaHQiOjQ4MCwiS2JwcyI6MTIwMCwiV2lkdGgiOjg0OH0.0LJi1usWbiPqp0QIcpq7Md5g1WxvJcPqVWNqsKw5nhA/dynamic_highlatency.m3u8?type=@doratvhd&m3u8=yes"
-			type="application/x-mpegURL" />
-		<p class="vjs-no-js">
-			To view this video please enable
-			JavaScript, and consider upgrading to
-			a
-			web browser that
-			<a href="https://videojs.com/html5-video-support/"
-				target="_blank">supports HTML5
-				video</a>
-		</p>
-	</video>
-
-	<script
-		src="https://vjs.zencdn.net/7.15.4/video.min.js"></script>
-</body>
-
+    <script>
+      var video = document.getElementById('video');
+      if (Hls.isSupported()) {
+        var hls = new Hls({
+          debug: true,
+        });
+        hls.loadSource('https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8');
+        hls.attachMedia(video);
+        hls.on(Hls.Events.MEDIA_ATTACHED, function () {
+          video.muted = true;
+          video.play();
+        });
+      }
+      // hls.js is not supported on platforms that do not have Media Source Extensions (MSE) enabled.
+      // When the browser has built-in HLS support (check using `canPlayType`), we can provide an HLS manifest (i.e. .m3u8 URL) directly to the video element throught the `src` property.
+      // This is using the built-in support of the plain video element, without using hls.js.
+      else if (video.canPlayType('application/vnd.apple.mpegurl')) {
+        video.src = 'https://prod-fastly-ap-southeast-1.video.pscp.tv:443/Transcoding/v1/hls/58PTueFMJJ7N432d__Gsr43WJdMFtJKmANOvp6aHFvxcTYATUnd1Bn5q9onfSDCGv-CQzDX5A1HNdUyFaPTsjA/transcode/ap-southeast-1/periscope-replay-direct-live/eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCIsInZlcnNpb24iOiIyIn0.eyJFbmNvZGVyU2V0dGluZyI6ImVuY29kZXJfc2V0dGluZ180ODBwMzBfMTAiLCJIZWlnaHQiOjQ4MCwiS2JwcyI6MTIwMCwiV2lkdGgiOjg0OH0.0LJi1usWbiPqp0QIcpq7Md5g1WxvJcPqVWNqsKw5nhA/dynamic_highlatency.m3u8?type=@doratvhd&m3u8=yes';
+        video.addEventListener('canplay', function () {
+          video.play();
+        });
+      }
+    </script>
+  <!-- injected in netlify post processing step -->
+<div style="position: absolute; top: 5px; right: 5px;">
+  <a rel="noopener" href="https://www.netlify.com" target="_blank"><img src="https://www.netlify.com/img/global/badges/netlify-color-accent.svg" /></a>
+</div></body>
 </html>
